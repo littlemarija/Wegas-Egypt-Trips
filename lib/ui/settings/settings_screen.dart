@@ -3,10 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:hive/hive.dart';
 import 'package:in_app_review/in_app_review.dart';
-import 'package:wegas/gen/assets.gen.dart';
 import 'package:wegas/main.dart';
 import 'package:wegas/models/user/user_model.dart';
-import 'package:wegas/ui/coins/coins_screen.dart';
 import 'package:wegas/ui/home/ui/home_screen.dart';
 import 'package:wegas/ui/onboarding/ui/onboarding.dart';
 import 'package:wegas/utils/apptypography/style.dart';
@@ -93,14 +91,21 @@ class _HomeScreenState extends State<SettingsScreen> {
                     padding: EdgeInsets.symmetric(vertical: 16.5.h),
                     child: InkWell(
                       onTap: ()async{
-                        if(Hive.box<UserModel>('user').values.first.lastUpdate!.day-DateTime.now().day>=1){
-                          print(Hive.box<UserModel>('user').values.first.lastUpdate);
+                        if(Hive.box<UserModel>('user').values.first.lastUpdate!=null){
+                          if(Hive.box<UserModel>('user').values.first.lastUpdate!.day-DateTime.now().day>=1){
+                            print(Hive.box<UserModel>('user').values.first.lastUpdate);
+                            setState(()=> user.balance=user.balance!+5000);
+                            Hive.box<UserModel>('user').values.first.lastUpdate=DateTime.now();
+                            await Hive.box<UserModel>('user').clear();
+                            await Hive.box<UserModel>('user').put('user',user);
+                          }else{
+                            print('День еще не прошел');
+                          }
+                        }else{
                           setState(()=> user.balance=user.balance!+5000);
-                          Hive.box<UserModel>('user').values.first.lastUpdate=DateTime.now();
+                          user.lastUpdate=DateTime.now();
                           await Hive.box<UserModel>('user').clear();
                           await Hive.box<UserModel>('user').put('user',user);
-                        }else{
-                          print('День еще не прошел');
                         }
                       },
                       child: Container(
@@ -109,22 +114,25 @@ class _HomeScreenState extends State<SettingsScreen> {
                         child: Center(
                           child: RichText(
                             text: TextSpan(
-                              text: 'get',
+                              text: 'get'.toUpperCase(),
                                 style: AppTypography.mainStyle.copyWith(
                                   fontSize: 50.w,
+                                  letterSpacing: 1.24
                                 ),
                               children: [
                                 TextSpan(
                                   text: ' 5000 ',
                                     style: AppTypography.mainStyle.copyWith(
                                       fontSize: 50.w,
-                                      color: AppColors.orange
+                                      color: AppColors.orange,
+                                        letterSpacing: 1.24
                                     ),
                                   children: [
                                     TextSpan(
-                                      text: 'coins',
+                                      text: 'coins'.toUpperCase(),
                                       style: AppTypography.mainStyle.copyWith(
                                         fontSize: 50.w,
+                                          letterSpacing: 1.24
                                       )
                                     )
                                   ]
@@ -138,19 +146,19 @@ class _HomeScreenState extends State<SettingsScreen> {
                   ),
                   RawBtn(
                     onTap: ()=>openPrivacyPolicy(),
-                      label: 'privacy policy',
+                      label: 'privacy policy'.toUpperCase(),
     ),
                   RawBtn(
                       onTap: ()=>openTermsOfUse(),
-                      label: 'terms of use',
+                      label: 'terms of use'.toUpperCase(),
                       ),
                   RawBtn(
                     onTap:()=>inappreview.requestReview(),
-                      label: 'rate app',
+                      label: 'rate app'.toUpperCase(),
                   ),
                   RawBtn(
                     onTap:()=>openSupport(),
-                      label: 'support',
+                      label: 'support'.toUpperCase(),
     )
                 ],
               ),
@@ -180,6 +188,7 @@ class RawBtn extends StatelessWidget {
                   color: label == 'buy premium'
                       ? AppColors.orange
                       : AppColors.white,
+                  letterSpacing: 1.24,
                   fontSize: 50.w,
                   fontWeight: FontWeight.w400
                 )

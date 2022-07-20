@@ -204,7 +204,7 @@ void startMain() async {
             activeSkin: 'emily',
             availableSkins: ['emily'],
             availableBg: ['bg1'],
-            lastUpdate: DateTime.now(),
+            lastUpdate: null,
             dailyCoinBalance: 1000,
         ));
     // s.close().then((value) async => await Hive.openBox<UserModel>('user'));
